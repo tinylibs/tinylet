@@ -7,6 +7,11 @@
 
 <div align="center">
 
+![](https://picsum.photos/600/400)
+
+[⚡ StackBlitz demo](https://stackblitz.com/) |
+[Docs website](https://tinylibs.github.io/tinythreadlet/)
+
 </div>
 
 ⏱ Run an `async` function synchronously with `redlet()` \
@@ -14,6 +19,11 @@
 🌳 Fully tree-shakable
 
 ## Installation
+
+![npm](https://img.shields.io/static/v1?style=for-the-badge&message=npm&color=CB3837&logo=npm&logoColor=FFFFFF&label=)
+![Yarn](https://img.shields.io/static/v1?style=for-the-badge&message=Yarn&color=2C8EBB&logo=Yarn&logoColor=FFFFFF&label=)
+![pnpm](https://img.shields.io/static/v1?style=for-the-badge&message=pnpm&color=FF6C37&logo=pnpm&logoColor=FFFFFF&label=)
+![jsDelivr](https://img.shields.io/static/v1?style=for-the-badge&message=jsDelivr&color=E84D3D&logo=jsDelivr&logoColor=FFFFFF&label=)
 
 You can install this package using npm, [Yarn], or [pnpm]:
 
@@ -41,6 +51,12 @@ this package straight from an npm CDN like [ESM>CDN] or [jsDelivr]!
 
 ## Usage
 
+![Node.js](https://img.shields.io/static/v1?style=for-the-badge&message=Node.js&color=339933&logo=Node.js&logoColor=FFFFFF&label=)
+![Deno](https://img.shields.io/static/v1?style=for-the-badge&message=Deno&color=000000&logo=Deno&logoColor=FFFFFF&label=)
+![Browser](https://img.shields.io/static/v1?style=for-the-badge&message=Browser&color=4285F4&logo=Google+Chrome&logoColor=FFFFFF&label=)
+
+[📚 Find more examples and docs on the documentation website!](https://tinylibs.github.io/tinythreadlet/)
+
 You can use `greenlet()` to run a function _asynchronously_ in a web worker!
 This is great for offloading complicated synchronous work (like image
 processing) to a web worker so that it doesn't block the main thread.
@@ -64,6 +80,8 @@ console.log(await green(1, 200));
 //=> -2066010092.990183
 ```
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz_small.svg)](https://stackblitz.com/github/___YOUR_PATH___)
+
 If you want to go the other way and run an `async` function in a worker thread,
 but still get the result back _synchronously_ in the current thread, you can use
 `redlet()`! This is useful when you absolutely _need_ something to be
@@ -82,12 +100,21 @@ console.log(red("https://jsonplaceholder.typicode.com/todos/1"));
 //=> { "userId": 1, "id": 1, "title": "delectus aut autem", "completed": false }
 ```
 
+[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz_small.svg)](https://stackblitz.com/github/___YOUR_PATH___)
+
 ⚠️ `redlet()` only works in browsers if you have [enabled `SharedArrayBuffer`],
 and even then only if it's run _not_ on the main `window` thread.
 
 ✅ `redlet()` will always work in Node.js and other server-side environments
 like Deno. Those contexts all enable `SharedArrayBuffer` by default, and support
 `Atomics.wait()` on the main thread! 🎉
+
+## Development
+
+![TypeScript](https://img.shields.io/static/v1?style=for-the-badge&message=TypeScript&color=3178C6&logo=TypeScript&logoColor=FFFFFF&label=)
+![Node.js](https://img.shields.io/static/v1?style=for-the-badge&message=Node.js&color=339933&logo=Node.js&logoColor=FFFFFF&label=)
+
+TODO: Add development blurb
 
 <!-- prettier-ignore-start -->
 [enabled `SharedArrayBuffer`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
