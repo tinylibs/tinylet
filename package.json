@@ -1,7 +1,7 @@
 {
   "name": "tinythreadlet",
   "version": "1.0.0",
-  "description": "desc",
+  "description": "🎨 redlet(), greenlet(), bluelet(), and more threading helpers for web Workers",
   "keywords": [],
   "homepage": "https://tinylibs.github.io/tinythreadlet/",
   "bugs": "https://github.com/tinylibs/tinythreadlet/issues",
