@@ -88,3 +88,13 @@ and even then only if it's run _not_ on the main `window` thread.
 ✅ `redlet()` will always work in Node.js and other server-side environments
 like Deno. Those contexts all enable `SharedArrayBuffer` by default, and support
 `Atomics.wait()` on the main thread! 🎉
+
+<!-- prettier-ignore-start -->
+[enabled `SharedArrayBuffer`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
+[Yarn]: https://yarnpkg.com/
+[pnpm]: https://pnpm.io/
+[Deno]: https://deno.land/
+[ESM>CDN]: https://esm.sh/
+[jsDelivr]: https://www.jsdelivr.com/esm
+[Deno's new `npm:` specifier]: https://deno.com/manual/node/npm_specifiers
+<!-- prettier-ignore-end -->
