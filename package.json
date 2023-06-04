@@ -1,0 +1,34 @@
+{
+  "name": "tinythreadlet",
+  "version": "1.0.0",
+  "description": "desc",
+  "keywords": [],
+  "homepage": "https://tinylibs.github.io/tinythreadlet/",
+  "bugs": "https://github.com/tinylibs/tinythreadlet/issues",
+  "repository": "github:tinylibs/tinythreadlet",
+  "license": "MIT",
+  "author": "Jacob Hummer <jcbhmr@outlook.com> (https://jcbhmr.me/)",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js",
+    "./*.js": "./dist/*.js",
+    "./internal/*": null
+  },
+  "scripts": {
+    "build-docs": "typedoc",
+    "prepack": "tsc",
+    "start": "tsx --test --watch test/*.test.ts",
+    "pretest": "prettier --ignore-path .gitignore -w .",
+    "test": "tsc --noEmit && tsx --test test/*.test.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "prettier": "^2.8.8",
+    "prettier-plugin-jsdoc": "^0.4.2",
+    "prettier-plugin-packagejson": "^2.4.3",
+    "tinybench": "^2.5.0",
+    "tsx": "^3.12.7",
+    "typedoc": "^0.24.8",
+    "typescript": "^5.1.3"
+  }
+}
