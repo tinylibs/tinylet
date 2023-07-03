@@ -1,7 +1,3 @@
-/src/internal/*-controller.txt.js
-/src/internal/*-controller-*.txt.js
-
-#region https://github.com/github/gitignore/blob/main/Node.gitignore
 # Logs
 logs
 *.log
@@ -132,4 +128,3 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
-#endregion

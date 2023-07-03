@@ -9,20 +9,30 @@
   "license": "MIT",
   "author": "Jacob Hummer <jcbhmr@outlook.com> (https://jcbhmr.me/)",
   "type": "module",
+  "imports": {
+    "#/internal/createContentURL.js": {
+      "node": "./src/internal/createContentURL-node.js",
+      "default": "./src/internal/createContentURL.js"
+    },
+    "#/internal/Worker.js": {
+      "node": "./src/internal/Worker-node.js",
+      "default": "./src/internal/Worker.js"
+    }
+  },
   "exports": {
     ".": "./dist/index.js",
     "./*.js": "./dist/*.js",
     "./internal/*": null
   },
   "scripts": {
-    "build-docs": "typedoc",
-    "prepack": "tsc",
-    "start": "tsx --test --watch test/*.test.ts",
-    "pretest": "prettier --ignore-path .gitignore -w .",
-    "test": "tsc --noEmit && tsx --test test/*.test.ts"
+    "lint": "prettier --ignore-path .gitignore -w .",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "esmurl": "^0.3.0",
+    "p-event": "^6.0.0"
   },
   "devDependencies": {
-    "@jcbhmr/esmurl": "^0.1.0",
     "@types/node": "^20.2.5",
     "prettier": "^2.8.8",
     "prettier-plugin-jsdoc": "^0.4.2",
@@ -32,8 +42,5 @@
     "tsx": "^3.12.7",
     "typedoc": "^0.24.8",
     "typescript": "^5.1.3"
-  },
-  "dependencies": {
-    "p-event": "^6.0.0"
   }
 }

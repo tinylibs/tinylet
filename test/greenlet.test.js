@@ -4,7 +4,7 @@ import { Bench } from "tinybench";
 import greenlet from "../src/greenlet.js";
 
 test("greenlet((a, b) => a + b)", async () => {
-  const green = greenlet((a: number, b: number) => a + b);
+  const green = greenlet((a, b) => a + b);
 
   await test("is a function", () => {
     assert.equal(typeof green, "function");
@@ -40,7 +40,7 @@ test("greenlet() benchmark", async () => {
   }
 
   {
-    let green: any;
+    let green;
     bench.add("lazy green()", async () => {
       green ??= greenlet(() => {});
       await green();

@@ -4,7 +4,7 @@ import { Bench } from "tinybench";
 import redlet from "../src/redlet.js";
 
 test("redlet((a, b) => a + b)", async () => {
-  const red = redlet((a: number, b: number) => a + b);
+  const red = redlet((a, b) => a + b);
 
   await test("is a function", () => {
     assert.equal(typeof red, "function");
@@ -39,7 +39,7 @@ test("redlet() benchmark", async () => {
   }
 
   {
-    let red: any;
+    let red;
     bench.add("lazy red()", () => {
       red ??= redlet(() => {});
       red();
