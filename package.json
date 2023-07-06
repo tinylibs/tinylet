@@ -1,48 +1,55 @@
 {
-  "name": "tinythreadlet",
+  "name": "tinylet",
   "version": "1.0.0",
-  "description": "🎨 redlet(), greenlet(), bluelet(), and more threading helpers for web Workers",
+  "description": "🎨 redlet() and greenlet() threading helpers for web Workers",
   "keywords": [],
-  "homepage": "https://tinylibs.github.io/tinythreadlet/",
-  "bugs": "https://github.com/tinylibs/tinythreadlet/issues",
-  "repository": "github:tinylibs/tinythreadlet",
+  "homepage": "https://github.com/tinylibs/tinylet#readme",
+  "bugs": "https://github.com/tinylibs/tinylet/issues",
+  "repository": "github:tinylibs/tinylet",
   "license": "MIT",
-  "author": "Jacob Hummer <jcbhmr@outlook.com> (https://jcbhmr.me/)",
+  "contributors": [
+    "Jacob Hummer <jcbhmr@outlook.com> (https://jcbhmr.me/)"
+  ],
   "type": "module",
   "imports": {
-    "#/internal/createContentURL.js": {
-      "node": "./src/internal/createContentURL-node.js",
-      "default": "./src/internal/createContentURL.js"
+    "#greenlet.js": {
+      "node": "./src/greenlet-node.js",
+      "default": "./src/greenlet.js"
     },
-    "#/internal/Worker.js": {
-      "node": "./src/internal/Worker-node.js",
-      "default": "./src/internal/Worker.js"
+    "#redlet.js": {
+      "node": "./src/redlet-node.js",
+      "default": "./src/redlet.js"
     }
   },
   "exports": {
-    ".": "./dist/index.js",
-    "./*.js": "./dist/*.js",
-    "./internal/*": null
+    ".": "./src/index.js",
+    "./greenlet.js": {
+      "node": "./src/greenlet-node.js",
+      "default": "./src/greenlet.js"
+    },
+    "./redlet.js": {
+      "node": "./src/redlet-node.js",
+      "default": "./src/redlet.js"
+    }
   },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "lint": "prettier --ignore-path .gitignore -w .",
-    "test": "node --test"
-  },
-  "dependencies": {
-    "esmurl": "^0.3.0",
-    "import-meta-resolve": "^3.0.0",
-    "p-event": "^6.0.0"
+    "test": "npm run test:node && npm run test:deno",
+    "test:node": "node --test test/greenlet-node.test.js test/greenlet-node+esmurl.test.js test/redlet-node.test.js test/redlet-node+esmurl.test.js",
+    "test:deno": "cross-env DENO_NO_PACKAGE_JSON=1 deno test -A --node-modules-dir=false test/redlet-deno.test.js test/redlet-deno+esmurl.test.js",
+    "test:browser": "serve"
   },
   "devDependencies": {
     "@types/node": "^20.2.5",
+    "cross-env": "^7.0.3",
+    "esmurl": "^0.5.0",
     "is-odd": "^3.0.1",
-    "prettier": "^2.8.8",
-    "prettier-plugin-jsdoc": "^0.4.2",
-    "prettier-plugin-packagejson": "^2.4.3",
-    "terser": "^5.18.1",
+    "prettier": "^3.0.0",
+    "serve": "^14.2.0",
     "tinybench": "^2.5.0",
-    "tsx": "^3.12.7",
-    "typedoc": "^0.24.8",
     "typescript": "^5.1.3"
   }
 }

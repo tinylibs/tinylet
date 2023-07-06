@@ -1,0 +1,37 @@
+<script type="module">
+  import greenlet from "../src/greenlet.js";
+  import assert from "https://esm.sh/assert";
+
+  const tests = [];
+  function test(n, f) {
+    tests.push([n, f]);
+  }
+  window.onload = async () => {
+    for (const [n, f] of tests) {
+      try {
+        await f();
+        log.innerHTML += `<span style="color: green">${n} OK</span>\n`;
+      } catch (e) {
+        log.innerHTML += `<span style="color: red">${n} FAIL</span>\n`;
+        console.error(n, e);
+      }
+    }
+  };
+
+  const f = greenlet((a, b) => a + b);
+
+  test("is a function", () => {
+    assert.equal(typeof f, "function");
+  });
+
+  test("returns a promise", async () => {
+    const p = f();
+    assert(p instanceof Promise);
+    await p;
+  });
+
+  test("f(1, 2) resolves to 3", async () => {
+    assert.equal(await f(1, 2), 3);
+  });
+</script>
+<pre id="log" style="font-size: 2rem"></pre>

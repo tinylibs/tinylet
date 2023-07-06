@@ -1,5 +1,5 @@
 import { Bench } from "tinybench";
-import greenlet from "../src/greenlet.js";
+import greenlet from "../src/greenlet-node.js";
 
 const bench = new Bench({ time: 1000 });
 
@@ -8,7 +8,8 @@ bench.add("create only", () => {
 });
 
 bench.add("create + invoke worker", async () => {
-  await greenlet(() => {})();
+  const f = greenlet(() => {});
+  await f();
 });
 
 const f = greenlet(() => {});

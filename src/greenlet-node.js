@@ -1,3 +1,5 @@
+import { Worker as NodeWorker } from "node:worker_threads";
+
 function URLCanParse(url) {
   try {
     new URL(url);
@@ -7,34 +9,33 @@ function URLCanParse(url) {
   return true;
 }
 
-function pEvent(eventTarget, type, filter) {
+function pEvent(eventEmitter, type, filter) {
   return new Promise((resolve, reject) => {
-    const controller = new AbortController();
-    const { signal } = controller;
-    eventTarget.addEventListener(
-      type,
-      (e) => {
-        if (filter && !filter(e)) {
-          return;
-        }
-        resolve(e);
-        controller.abort();
-      },
-      { signal },
-    );
-    eventTarget.addEventListener(
-      "error",
-      (e) => {
-        reject(e.error ?? e);
-        controller.abort();
-      },
-      { signal },
-    );
+    const h1 = (e) => {
+      if (filter && !filter(e)) {
+        return;
+      }
+      resolve(e);
+      abort();
+    };
+    const h2 = (e) => {
+      reject(e);
+      abort();
+    };
+    const abort = () => {
+      eventEmitter.off(type, h1);
+      eventEmitter.off("error", h2);
+    };
+    eventEmitter.on(type, h1);
+    eventEmitter.on("error", h2);
   });
 }
 
 const controllerCode = `
-globalThis.onmessage = async (e) => {
+import { parentPort } from "node:worker_threads";
+
+const self = parentPort;
+self.onmessage = async (e) => {
   const [channel, moduleURL, this_, arguments_] = e.data;
   /** @type {[string] | [void, any]} */
   let r;
@@ -45,20 +46,24 @@ globalThis.onmessage = async (e) => {
     r = [, e];
   }
   r.unshift(channel);
-  postMessage(r);
+  self.postMessage(r);
 };
 `;
 
-/** @type {{ worker: Worker } | null | undefined} */
+/** @type {{ worker: NodeWorker } | null | undefined} */
 let cache;
 
-/** @returns {Worker} */
+/** @returns {NodeWorker} */
 function getWorker() {
   if (!cache) {
-    const u = URL.createObjectURL(
-      new Blob([controllerCode], { type: "text/javascript" }),
-    );
-    const worker = new Worker(u, { type: "module", name: "greenlet" });
+    const u =
+      "data:text/javascript;base64," +
+      Buffer.from(controllerCode).toString("base64");
+    const worker = new NodeWorker(`import(${JSON.stringify(u)})`, {
+      eval: true,
+      name: "greenlet",
+    });
+    worker.unref();
     cache = { worker };
   }
   return cache.worker;
@@ -77,33 +82,31 @@ function greenlet(functionOrURL) {
   if (typeof functionOrURL === "function") {
     maybeFunction = functionOrURL;
     const code = `export default ${functionOrURL}`;
-    executorURL = URL.createObjectURL(
-      new Blob([code], { type: "text/javascript" }),
-    );
+    executorURL =
+      "data:text/javascript;base64," + Buffer.from(code).toString("base64");
   } else if (URLCanParse(functionOrURL)) {
     executorURL = functionOrURL;
   } else {
     const code = `export default ${functionOrURL}`;
-    executorURL = URL.createObjectURL(
-      new Blob([code], { type: "text/javascript" }),
-    );
+    executorURL =
+      "data:text/javascript;base64," + Buffer.from(code).toString("base64");
   }
 
   const { run } = {
     async run() {
       const channel = Math.random().toString();
       const worker = getWorker();
-      const p = pEvent(worker, "message", (e) => e.data[0] === channel);
+      const p = pEvent(worker, "message", (e) => e[0] === channel);
       worker.postMessage([channel, executorURL, this, [...arguments]]);
-      const e = await p;
-      if (e.data.length === 2) {
-        return e.data[1];
+      const r = await p;
+      if (r.length === 2) {
+        return r[1];
       } else {
-        throw e.data[2];
+        throw r[2];
       }
     },
   };
-  if (typeof maybeFunction === "function") {
+  if (maybeFunction) {
     Object.defineProperties(
       run,
       Object.getOwnPropertyDescriptors(maybeFunction),
