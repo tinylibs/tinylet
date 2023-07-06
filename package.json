@@ -1,6 +1,6 @@
 {
   "name": "tinylet",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "🎨 redlet() and greenlet() threading helpers for Node.js, Deno, and the browser",
   "keywords": [],
   "homepage": "https://github.com/tinylibs/tinylet#readme",
