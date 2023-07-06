@@ -2,8 +2,8 @@
 
 # tinylet
 
-🎨 `redlet()`, `greenlet()`, `bluelet()`, and more threading helpers for web
-`Worker`s
+🎨 `redlet()` and `greenlet()` threading helpers for Node.js, Deno, and the
+browser
 
 <div align="center">
 
@@ -13,7 +13,10 @@
 
 ⏱ Run an `async` function synchronously with `redlet()` \
 🏃‍♂️ Offload a heavy function to a `Worker` with `greenlet()` \
-🌳 Fully tree-shakable
+🌳 Fully tree-shakable \
+🦕 Supports Deno! \
+💻 Works in the browser \
+⚠️ `redlet()` requires [enabling `SharedArrayBuffer`] in the browser
 
 ## Installation
 
@@ -110,6 +113,7 @@ TODO: Add development blurb
 
 <!-- prettier-ignore-start -->
 [enabled `SharedArrayBuffer`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
+[enabling `SharedArrayBuffer`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer#security_requirements
 [Yarn]: https://yarnpkg.com/
 [pnpm]: https://pnpm.io/
 [Deno]: https://deno.land/
