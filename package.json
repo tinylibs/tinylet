@@ -13,10 +13,14 @@
   "type": "module",
   "imports": {
     "#greenlet.js": {
+      "deno": "./src/greenlet.js",
+      "bun": null,
       "node": "./src/greenlet-node.js",
       "default": "./src/greenlet.js"
     },
     "#redlet.js": {
+      "deno": "./src/redlet.js",
+      "bun": null,
       "node": "./src/redlet-node.js",
       "default": "./src/redlet.js"
     }
@@ -24,10 +28,14 @@
   "exports": {
     ".": "./src/index.js",
     "./greenlet.js": {
+      "deno": "./src/greenlet.js",
+      "bun": null,
       "node": "./src/greenlet-node.js",
       "default": "./src/greenlet.js"
     },
     "./redlet.js": {
+      "deno": "./src/redlet.js",
+      "bun": null,
       "node": "./src/redlet-node.js",
       "default": "./src/redlet.js"
     }
