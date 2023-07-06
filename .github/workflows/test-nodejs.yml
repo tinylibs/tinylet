@@ -2,24 +2,18 @@ name: Test Node.js
 on:
   push:
     branches: "main"
-    paths:
-      - src/**
-      - test/**
-      - "*rc"
-      - "*config*"
-      - "*.json"
-      - "*.lock"
-      - .github/workflows/test-nodejs.yml
+    paths-ignore:
+      - .gitignore
+      - LICENSE
+      - README.md
+      - "!.github/workflows/test-nodejs.yml"
   pull_request:
     branches: "main"
     paths:
-      - src/**
-      - test/**
-      - "*rc"
-      - "*config*"
-      - "*.json"
-      - "*.lock"
-      - .github/workflows/test-nodejs.yml
+      - .gitignore
+      - LICENSE
+      - README.md
+      - "!.github/workflows/test-nodejs.yml"
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
