@@ -59,9 +59,11 @@
     "deasync": "^0.1.28",
     "esmurl": "^0.5.0",
     "is-odd": "^3.0.1",
+    "make-synchronous": "^1.0.0",
     "patch-package": "^7.0.0",
     "prettier": "^3.0.0",
     "serve": "^14.2.0",
+    "synckit": "^0.8.5",
     "tinybench": "^2.5.0",
     "typescript": "^5.1.3"
   }

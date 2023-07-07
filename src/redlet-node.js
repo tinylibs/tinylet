@@ -17,13 +17,14 @@ function getPort() {
       const { workerData } = await import("node:worker_threads");
       const port = workerData.port;
       port.onmessage = async (e) => {
-        const [lockBuffer, moduleURL, that, args] = e.data;
+        /** @type {[SharedArrayBuffer, string, any[]]} */
+        const [lockBuffer, moduleURL, args] = e.data;
         const lock = new Int32Array(lockBuffer);
         /** @type {[any] | [void, any]} */
         let r;
         try {
           const module = await import(moduleURL);
-          r = [await module.default.apply(that, args)];
+          r = [await module.default.apply(undefined, args)];
         } catch (e) {
           r = [, e];
         }
@@ -48,11 +49,10 @@ function getPort() {
 getPort.c;
 
 /**
- * @template T
  * @template {any[]} A
  * @template R
- * @param {((this: T, ...args: A) => R) | string | URL} functionOrURL
- * @returns {(this: T, ...args: A) => Awaited<R>}
+ * @param {((...args: A) => R) | string | URL} functionOrURL
+ * @returns {(...args: A) => Awaited<R>}
  */
 function redlet(functionOrURL) {
   let executorURL;
@@ -70,12 +70,15 @@ function redlet(functionOrURL) {
       "data:text/javascript;base64," + Buffer.from(code).toString("base64");
   }
 
-  function run() {
+  function run(...args) {
+    const port = getPort();
+
     const lockBuffer = new SharedArrayBuffer(4);
     const lock = new Int32Array(lockBuffer);
-    const port = getPort();
-    port.postMessage([lockBuffer, executorURL, this, [...arguments]]);
+    port.postMessage([lockBuffer, executorURL, args]);
     Atomics.wait(lock, 0, 0);
+
+    /** @type {[any] | [void, any]} */
     // @ts-ignore
     const r = receiveMessageOnPort(port).message;
     if (r.length === 1) {
