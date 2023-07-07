@@ -20,12 +20,11 @@
   };
 
   test("greenlet(esmurl())", async () => {
-    const remoteIsOdd = greenlet(
-      esmurl(import.meta, async () => {
-        const { default: isOdd } = await import("https://esm.run/is-odd");
-        return isOdd;
-      })
-    );
+    const u = esmurl(import.meta, async () => {
+      const { default: isOdd } = await import("https://esm.run/is-odd");
+      return isOdd;
+    });
+    const remoteIsOdd = greenlet(u);
 
     assert.equal(await remoteIsOdd(1), true);
   });

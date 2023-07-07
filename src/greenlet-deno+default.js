@@ -1,20 +1,17 @@
-import { Worker as NodeWorker } from "node:worker_threads";
 import esmurl from "esmurl";
+import pEventTarget from "./lib/pEventTarget.js";
 import URLCanParse from "./lib/URLCanParse.js";
-import pEventEmitter from "./lib/pEventEmitter.js";
 
-/** @returns {NodeWorker} */
+/**
+ * @returns {Worker}
+ */
 function getWorker() {
   if (!getWorker.c) {
-    const u = esmurl(import.meta, async () => {
-      const { parentPort } = await import("node:worker_threads");
-      const self = parentPort;
-      /** @param {MessageEvent} e */
-      // @ts-ignore
-      self.onmessage = async (e) => {
+    const u = esmurl(import.meta, () => {
+      globalThis.onmessage = async (e) => {
         /** @type {[string, string, any, any[]]} */
         const [channel, moduleURL, that, args] = e.data;
-        /** @type {[string] | [void, any]} */
+        /** @type {[any] | [void, any]} */
         let r;
         try {
           const module = await import(moduleURL);
@@ -23,19 +20,14 @@ function getWorker() {
         } catch (e) {
           r = [, e];
         }
-        self.postMessage([channel].concat(r));
+        globalThis.postMessage([channel].concat(r));
       };
     });
-    const worker = new NodeWorker(`import(${JSON.stringify(u)})`, {
-      eval: true,
-      name: "greenlet",
-    });
-    worker.unref();
-    getWorker.c = worker;
+    getWorker.c = new Worker(u, { type: "module", name: "greenlet" });
   }
   return getWorker.c;
 }
-/** @type {NodeWorker | null | undefined} */
+/** @type {Worker | null | undefined} */
 getWorker.c;
 
 /**
@@ -51,14 +43,16 @@ function greenlet(functionOrURL) {
   if (typeof functionOrURL === "function") {
     maybeFunction = functionOrURL;
     const code = `export default ${functionOrURL}`;
-    executorURL =
-      "data:text/javascript;base64," + Buffer.from(code).toString("base64");
+    executorURL = URL.createObjectURL(
+      new Blob([code], { type: "text/javascript" })
+    );
   } else if (URLCanParse(functionOrURL)) {
     executorURL = functionOrURL;
   } else {
     const code = `export default ${functionOrURL}`;
-    executorURL =
-      "data:text/javascript;base64," + Buffer.from(code).toString("base64");
+    executorURL = URL.createObjectURL(
+      new Blob([code], { type: "text/javascript" })
+    );
   }
 
   /**
@@ -69,10 +63,15 @@ function greenlet(functionOrURL) {
     const worker = getWorker();
 
     const channel = Math.random().toString();
-    const p = pEventEmitter(worker, "message", (e) => e[0] === channel);
+    const p = pEventTarget(
+      worker,
+      "message",
+      /** @param {MessageEvent} e */ (e) => e.data[0] === channel
+    );
     worker.postMessage([channel, executorURL, this, [...arguments]]);
+    const e = await p;
     /** @type {[any] | [void, any]} */
-    const r = (await p).slice(1);
+    const r = e.data.slice(1);
 
     if (r.length === 1) {
       return r[0];
