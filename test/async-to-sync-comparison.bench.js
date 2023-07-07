@@ -4,12 +4,9 @@ import { createWorker } from "await-sync";
 import makeSynchronous from "make-synchronous";
 import { createSyncFn } from "synckit";
 import { readFile, writeFile } from "node:fs/promises";
-import { unlinkSync } from "node:fs";
+import { appendFileSync, unlinkSync } from "node:fs";
 
 await writeFile("test.log", "test\n".repeat(1000));
-process.on("exit", () => {
-  unlinkSync("test.log");
-});
 const testFile = process.cwd() + "/test.log";
 
 const bench = new Bench({ time: 3000 });
@@ -23,13 +20,6 @@ await writeFile("synckit-runAsWorker.mjs", `
   })
 `
 );
-process.on("exit", () => {
-  try {
-    unlinkSync("synckit-runAsWorker.mjs");
-  } catch (e) {
-    console.log(e);
-  }
-});
 const synckit = createSyncFn(process.cwd() + "/synckit-runAsWorker.mjs");
 bench.add("synckit", () => {
   synckit(testFile);

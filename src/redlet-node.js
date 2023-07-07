@@ -16,18 +16,34 @@ function getPort() {
     const u = esmurl(import.meta, async () => {
       const { workerData } = await import("node:worker_threads");
       const port = workerData.port;
+      /** @type {((...a: any[]) => any)[]} */
+      const rememberedFunctions = [];
       port.onmessage = async (e) => {
-        /** @type {[SharedArrayBuffer, string, any[]]} */
-        const [lockBuffer, moduleURL, args] = e.data;
+        /** @type {SharedArrayBuffer} */
+        const lockBuffer = e.data[0];
+        /** @type {string | number} */
+        const executorURLOrId = e.data[1];
+        /** @type {any[]} */
+        const args = e.data[2];
         const lock = new Int32Array(lockBuffer);
+
         /** @type {[any] | [void, any]} */
         let r;
         try {
-          const module = await import(moduleURL);
-          r = [await module.default.apply(undefined, args)];
+          /** @type {((...a: any[]) => any)} */
+          let f;
+          if (typeof executorURLOrId === "number") {
+            f = rememberedFunctions[executorURLOrId];
+          } else {
+            const module = await import(executorURLOrId);
+            f = await module.default;
+            rememberedFunctions.push(f);
+          }
+          r = [await f(...args)];
         } catch (e) {
           r = [, e];
         }
+
         port.postMessage(r);
         Atomics.store(lock, 0, 1);
         Atomics.notify(lock, 0);
@@ -48,6 +64,9 @@ function getPort() {
 /** @type {{ worker: NodeWorker, port: MessagePort } | null | undefined} */
 getPort.c;
 
+/** @type {string[]} */
+const rememberedURLs = [];
+
 /**
  * @template {any[]} A
  * @template R
@@ -55,7 +74,9 @@ getPort.c;
  * @returns {(...args: A) => Awaited<R>}
  */
 function redlet(functionOrURL) {
+  /** @type {string} */
   let executorURL;
+  /** @type {((...args: A) => R) | null | undefined} */
   let maybeFunction;
   if (typeof functionOrURL === "function") {
     maybeFunction = functionOrURL;
@@ -63,19 +84,28 @@ function redlet(functionOrURL) {
     executorURL =
       "data:text/javascript;base64," + Buffer.from(code).toString("base64");
   } else if (URLCanParse(functionOrURL)) {
-    executorURL = functionOrURL;
+    executorURL = `${functionOrURL}`;
   } else {
     const code = `export default ${functionOrURL}`;
     executorURL =
       "data:text/javascript;base64," + Buffer.from(code).toString("base64");
   }
 
+  /**
+   * @param  {A} args
+   * @returns {Awaited<R>}
+   */
   function run(...args) {
     const port = getPort();
 
     const lockBuffer = new SharedArrayBuffer(4);
     const lock = new Int32Array(lockBuffer);
-    port.postMessage([lockBuffer, executorURL, args]);
+    if (rememberedURLs.includes(executorURL)) {
+      port.postMessage([lockBuffer, rememberedURLs.indexOf(executorURL), args]);
+    } else {
+      port.postMessage([lockBuffer, executorURL, args]);
+      rememberedURLs.push(executorURL);
+    }
     Atomics.wait(lock, 0, 0);
 
     /** @type {[any] | [void, any]} */
