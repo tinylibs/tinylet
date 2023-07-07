@@ -18,7 +18,7 @@ export default function pEventTarget(eventTarget, type, filter = () => true) {
           controller.abort();
         }
       },
-      { signal }
+      { signal },
     );
     eventTarget.addEventListener(
       "error",
@@ -27,7 +27,7 @@ export default function pEventTarget(eventTarget, type, filter = () => true) {
         reject(e.error ?? e);
         controller.abort();
       },
-      { signal }
+      { signal },
     );
   });
 }

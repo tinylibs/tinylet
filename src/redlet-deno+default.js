@@ -59,14 +59,14 @@ function redlet(functionOrURL) {
     maybeFunction = functionOrURL;
     const code = `export default ${functionOrURL}`;
     executorURL = URL.createObjectURL(
-      new Blob([code], { type: "text/javascript" })
+      new Blob([code], { type: "text/javascript" }),
     );
   } else if (URLCanParse(functionOrURL)) {
     executorURL = functionOrURL;
   } else {
     const code = `export default ${functionOrURL}`;
     executorURL = URL.createObjectURL(
-      new Blob([code], { type: "text/javascript" })
+      new Blob([code], { type: "text/javascript" }),
     );
   }
 

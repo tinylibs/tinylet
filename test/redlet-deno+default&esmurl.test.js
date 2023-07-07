@@ -7,7 +7,7 @@ Deno.test("redlet(esmurl())", { sanitizeOps: false }, async () => {
     esmurl(import.meta, async () => {
       const { default: isOdd } = await import("npm:is-odd");
       return isOdd;
-    })
+    }),
   );
 
   assert.equal(remoteIsOdd(1), true);

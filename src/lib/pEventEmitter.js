@@ -10,13 +10,13 @@ export default function pEventEmitter(eventEmitter, type, filter = () => true) {
     function abort() {
       eventEmitter.off(type, handleType);
       eventEmitter.off("error", handleError);
-    };
+    }
     function handleType(x) {
       if (filter(x)) {
         resolve(x);
         abort();
       }
-    };
+    }
     function handleError(e) {
       reject(e);
       abort();

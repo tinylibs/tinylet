@@ -44,14 +44,14 @@ function greenlet(functionOrURL) {
     maybeFunction = functionOrURL;
     const code = `export default ${functionOrURL}`;
     executorURL = URL.createObjectURL(
-      new Blob([code], { type: "text/javascript" })
+      new Blob([code], { type: "text/javascript" }),
     );
   } else if (URLCanParse(functionOrURL)) {
     executorURL = functionOrURL;
   } else {
     const code = `export default ${functionOrURL}`;
     executorURL = URL.createObjectURL(
-      new Blob([code], { type: "text/javascript" })
+      new Blob([code], { type: "text/javascript" }),
     );
   }
 
@@ -66,7 +66,7 @@ function greenlet(functionOrURL) {
     const p = pEventTarget(
       worker,
       "message",
-      /** @param {MessageEvent} e */ (e) => e.data[0] === channel
+      /** @param {MessageEvent} e */ (e) => e.data[0] === channel,
     );
     worker.postMessage([channel, executorURL, this, [...arguments]]);
     const e = await p;
