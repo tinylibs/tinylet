@@ -49,7 +49,7 @@
     "test:node": "node --test test/greenlet-node.test.js test/greenlet-node&esmurl.test.js test/redlet-node.test.js test/redlet-node&esmurl.test.js",
     "test:deno": "cross-env DENO_NO_PACKAGE_JSON=1 deno test -A --node-modules-dir=false test/redlet-deno.test.js test/redlet-deno+esmurl.test.js",
     "test:browser": "serve",
-    "bench": "node test/greenlet-node.bench.js && node test/redlet-node.bench.js",
+    "bench": "node test/greenlet-node.bench.js && node test/async-to-sync-comparison.bench.js",
     "postinstall": "patch-package"
   },
   "devDependencies": {
