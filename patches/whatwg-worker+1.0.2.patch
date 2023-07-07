@@ -1,0 +1,20 @@
+diff --git a/node_modules/whatwg-worker/debug b/node_modules/whatwg-worker/debug
+new file mode 100644
+index 0000000..ded0f69
+--- /dev/null
++++ b/node_modules/whatwg-worker/debug
+@@ -0,0 +1 @@
++url:
+\ No newline at end of file
+diff --git a/node_modules/whatwg-worker/node-worker.js b/node_modules/whatwg-worker/node-worker.js
+index aeca77d..4b0dca3 100644
+--- a/node_modules/whatwg-worker/node-worker.js
++++ b/node_modules/whatwg-worker/node-worker.js
+@@ -107,6 +107,7 @@ const WebWorker = class Worker extends EventTarget {
+           ]
+       }
+     )
++    worker.unref()
+ 
+     // Set up event listeners for the worker events
+     worker.on('exit', () => {
