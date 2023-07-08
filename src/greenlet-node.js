@@ -28,6 +28,7 @@ function getWorker() {
     });
     const worker = new NodeWorker(`import(${JSON.stringify(u)})`, {
       eval: true,
+      // @ts-ignore
       name: "greenlet",
     });
     worker.unref();

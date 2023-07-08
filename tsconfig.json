@@ -6,7 +6,11 @@
     "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "strict": false
+    "strict": false,
+    "paths": {
+      "#greenlet.js": ["./src/greenlet-node.js"],
+      "#redlet.js": ["./src/redlet-node.js"]
+    }
   },
   "include": ["src"]
 }

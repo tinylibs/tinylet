@@ -1,0 +1,48 @@
+<script type="importmap">
+  {
+    "imports": {
+      "#greenlet.js": "../src/greenlet-deno+default.js",
+      "#redlet.js": "../src/redlet-deno+default.js",
+      "esmurl": "https://esm.run/esmurl"
+    }
+  }
+</script>
+<script type="module">
+  import { Bench } from "https://esm.run/tinybench";
+  import { greenlet, redlet } from "../src/index.js";
+  import { getTable } from "https://esm.run/console.table";
+
+  const bench = new Bench();
+
+  const g = greenlet((a, b) => a + b);
+  const r = redlet((a, b) => a + b);
+
+  bench.add("greenlet: 200x 'A' + 200x 'B' concat", async () => {
+    await g("A".repeat(200), "B".repeat(200));
+  });
+
+  bench.add("redlet: 200x 'A' + 200x 'B' concat", () => {
+    r("A".repeat(200), "B".repeat(200));
+  });
+
+  bench.add("greenlet: 1000x 'A' + 1000x 'B' concat", async () => {
+    await g("A".repeat(1000), "B".repeat(1000));
+  });
+
+  bench.add("redlet: 1000x 'A' + 1000x 'B' concat", () => {
+    r("A".repeat(1000), "B".repeat(1000));
+  });
+
+  bench.add("greenlet: 10kb 'A' + 10kb 'B' concat", async () => {
+    await g("A".repeat(10 * 1024), "B".repeat(10 * 1024));
+  });
+
+  bench.add("redlet: 10kb 'A' + 10kb 'B' concat", () => {
+    r("A".repeat(10 * 1024), "B".repeat(10 * 1024));
+  });
+
+  await bench.warmup();
+  await bench.run();
+  log.innerText = getTable(bench.table());
+</script>
+<pre id="log" style="font-size: 2rem"></pre>

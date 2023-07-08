@@ -1,4 +1,4 @@
-name: Test Node.js
+name: Test Deno
 on:
   push:
     branches: "main"
@@ -6,29 +6,28 @@ on:
       - .gitignore
       - LICENSE
       - README.md
-      - "!.github/workflows/test-nodejs.yml"
+      - "!.github/workflows/test-deno.yml"
   pull_request:
     branches: "main"
     paths:
       - .gitignore
       - LICENSE
       - README.md
-      - "!.github/workflows/test-nodejs.yml"
+      - "!.github/workflows/test-deno.yml"
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 jobs:
-  test-nodejs:
-    strategy:
-      matrix:
-        node-version: ["16", "18", "20"]
+  test-deno:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "20"
           cache: npm
+      - uses: denoland/setup-deno@v1
+      - run: deno eval --node-modules-dir 'import "npm:nocode@1.0.0"'
       - run: npm ci
-      - run: npm run test:node
-      - run: npm run bench:node
+      - run: npm run test:deno
+      - run: npm run bench:deno

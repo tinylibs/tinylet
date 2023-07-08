@@ -1,0 +1,88 @@
+<script type="importmap">
+  {
+    "imports": {
+      "#greenlet.js": "../src/greenlet-deno+default.js",
+      "#redlet.js": "../src/redlet-deno+default.js",
+      "esmurl": "https://esm.run/esmurl"
+    }
+  }
+</script>
+<script type="module">
+  import { greenlet, redlet } from "../src/index.js";
+  import esmurl from "https://esm.run/esmurl";
+  import assert from "https://esm.run/assert";
+
+  const tests = [];
+  function test(n, f) {
+    tests.push([n, f]);
+  }
+  window.onload = async () => {
+    for (const [n, f] of tests) {
+      const t = {
+        async test(f) {
+          try {
+            await f();
+            log.innerHTML += `  <span style="color: green">${n} OK</span>\n`;
+          } catch (e) {
+            log.innerHTML += `  <span style="color: red">${n} FAIL</span>\n`;
+            console.error(n, e);
+          }
+        },
+      };
+      try {
+        await f(t);
+        log.innerHTML += `<span style="color: green">${n} OK</span>\n`;
+      } catch (e) {
+        log.innerHTML += `<span style="color: red">${n} FAIL</span>\n`;
+        console.error(n, e);
+      }
+    }
+  };
+
+  test("greenlet() with esmurl()", async (t) => {
+    let f;
+    await t.test("create function", async () => {
+      const u = esmurl(import.meta, async () => {
+        const { default: isOdd } = await import("npm:is-odd");
+        return isOdd;
+      });
+      f = greenlet(u);
+    });
+
+    let isItOdd;
+    await t.test("call function", async () => {
+      isItOdd = await f(1);
+      assert.equal(isItOdd, true);
+    });
+
+    let isItOddAgain;
+    await t.test("call function again", async () => {
+      isItOddAgain = await f(100);
+      assert.equal(isItOddAgain, false);
+    });
+  });
+
+  test("redlet() with esmurl()", async (t) => {
+    let f;
+    await t.test("create function", async () => {
+      const u = esmurl(import.meta, async () => {
+        const { default: isOdd } = await import("npm:is-odd");
+        return isOdd;
+      });
+      f = redlet(u);
+    });
+
+    let isItOdd;
+    await t.test("call function", async () => {
+      isItOdd = f(1);
+      assert.equal(isItOdd, true);
+    });
+
+    let isItOddAgain;
+    await t.test("call function again", async () => {
+      isItOddAgain = f(100);
+      assert.equal(isItOddAgain, false);
+    });
+  });
+</script>
+<pre id="log" style="font-size: 2rem"></pre>
